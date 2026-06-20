@@ -1,133 +1,149 @@
-# Resume Analyzer
+# Resume ATS Analyzer
 
-AI-powered resume analysis tool that evaluates your resume against ATS (Applicant Tracking Systems) and provides actionable feedback to improve your chances of landing your dream job.
+A full-stack ATS (Applicant Tracking System) resume analyzer built with:
+- **Backend**: ASP.NET Core (.NET 8) Web API
+- **Frontend**: React + Vite + TypeScript + Tailwind CSS
+- **AI**: Groq API (free tier available)
+
+---
 
 ## Features
 
-- **File Upload**: Drag & drop or click to upload PDF or DOCX resume files
-- **Text Extraction**: Automatic extraction of text from PDF and DOCX files
-- **AI Analysis**: Powered by Groq's high-speed AI models
-- **ATS Scoring**: Get an ATS compatibility score (0-100)
-- **Tech Stack Detection**: Identify skills and technologies in your resume
-- **Strengths & Weaknesses**: Detailed breakdown of what's working and what needs improvement
-- **Missing Keywords**: Keywords commonly requested but missing from your resume
-- **Suggestions**: Actionable recommendations to improve your resume
-- **Career Advice**: Personalized career guidance
+- Upload PDF or DOCX resume files
+- Instant AI-powered ATS score (0–100)
+- Detects tech stack, strengths, keyword gaps, and weaknesses
+- Actionable improvement suggestions and career advice
+- Caches analysis results in-memory for repeated uploads
 
-## Tech Stack
-
-- **Framework**: Next.js 16
-- **UI**: React 19 + Tailwind CSS
-- **AI**: OpenAI SDK + Groq API
-- **File Parsing**: pdf-parse (PDF), mammoth (DOCX)
-- **Icons**: Lucide React
-
-## Getting Started
-
-### Prerequisites
-
-- Node.js 18+
-- Groq API Key
-
-### Installation
-
-```bash
-npm install
-```
-
-### Environment Variables
-
-Create a `.env.local` file in the project root:
-
-```env
-GROQ_API_KEY=your_groq_api_key_here
-```
-
-### Development
-
-```bash
-npm run dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) in your browser.
-
-### Build
-
-```bash
-npm run build
-```
-
-### Production
-
-```bash
-npm start
-```
+---
 
 ## Project Structure
 
 ```
-src/
-├── app/
-│   ├── api/analyze/route.ts    # POST /api/analyze endpoint
-│   ├── page.tsx              # Main landing page
-│   ├── layout.tsx            # Root layout
-│   └── globals.css          # Global styles
-├── components/
-│   ├── ui/                 # Reusable UI components
-│   │   ├── button.tsx
-│   │   ├── card.tsx
-│   │   ├── input.tsx
-│   │   ├── label.tsx
-│   │   ├── badge.tsx
-│   │   ├── progress.tsx
-│   │   └── circular-progress.tsx
-│   └── home/
-│       ├── ResumeAnalyzer.tsx    # Main upload component
-│       ├── ATSDashboard.tsx      # Results dashboard
-│       ├── LoadingState.tsx       # Loading animation
-│       └── ErrorState.tsx         # Error handling
-├── lib/
-│   ├── extractors/
-│   │   ├── pdf.ts         # PDF text extraction
-│   │   ├── docx.ts       # DOCX text extraction
-│   │   └── index.ts     # Extractor factory
-│   ├── services/
-│   │   ├── ai-analyzer.ts    # AI resume analysis
-│   │   └── file-analyzer.ts # File handling
-│   └── utils.ts           # Utility functions
-└── types/
-    └── index.ts          # TypeScript types
+resume-ats/
+├── backend/          # ASP.NET Core .NET 8 Web API
+│   ├── Controllers/  # AnalyzeController (API endpoints)
+│   ├── Services/     # ResumeAnalyzerService (Groq AI integration)
+│   ├── Models/       # ResumeAnalysis, AnalyzeResponse
+│   ├── Repository/   # InMemoryAnalysisRepository (caching)
+│   ├── Config/       # GroqSettings (configuration)
+│   ├── Helpers/      # HashHelper
+│   └── Enums/        # ExperienceLevel, FileType
+└── frontend/         # React + Vite frontend
+    └── src/
+        ├── components/home/  # ResumeAnalyzer, ATSDashboard, FileUpload
+        ├── lib/extractors/   # PDF and DOCX text extraction
+        └── types/            # TypeScript types
 ```
 
-## API
+---
 
-### POST /api/analyze
+## Setup & Running Locally
 
-Analyze a resume file.
+### Prerequisites
 
-**Request**: `multipart/form-data`
+- [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
+- [Node.js 18+](https://nodejs.org/)
+- A free [Groq API key](https://console.groq.com)
 
-- `file`: Resume file (PDF or DOCX, max 10MB)
+### 1. Clone the repository
 
-**Response**: `application/json`
+```bash
+git clone https://github.com/kalyan-reddy-b/resume-ats.git
+cd resume-ats
+```
 
+### 2. Set up the GROQ API key (IMPORTANT — keep this secret!)
+
+**Option A: Environment variable (recommended)**
+
+Windows PowerShell:
+```powershell
+$env:GROQ_API_KEY="your_groq_api_key_here"
+```
+
+Linux/macOS:
+```bash
+export GROQ_API_KEY="your_groq_api_key_here"
+```
+
+**Option B: `appsettings.Development.json` (local only, gitignored)**
+
+Create `backend/appsettings.Development.json` (already in `.gitignore`):
 ```json
 {
-  "success": true,
-  "data": {
-    "role": "Software Engineer",
-    "level": "Mid-Level",
-    "score": 75,
-    "techStack": ["React", "Node.js", "TypeScript"],
-    "strengths": ["Strong technical skills", "Good project descriptions"],
-    "weaknesses": ["Missing ATS keywords", "No quantified results"],
-    "missingKeywords": ["AWS", "CI/CD", "Docker"],
-    "suggestions": ["Add quantifiable metrics", "Include AWS experience"],
-    "advice": "Focus on adding cloud technologies..."
+  "GroqSettings": {
+    "ApiKey": "your_groq_api_key_here"
   }
 }
 ```
 
-## License
+> ⚠️ **Never put your API key in `appsettings.json`** — that file is committed to git!
 
-MIT
+### 3. Run the backend
+
+```bash
+cd backend
+dotnet restore
+dotnet run
+```
+
+The backend will start at `http://localhost:5069`.
+
+### 4. Run the frontend
+
+Open a new terminal:
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+The frontend will start at `http://localhost:5173` and automatically proxy `/api` requests to the backend.
+
+### 5. Open the app
+
+Go to [http://localhost:5173](http://localhost:5173) in your browser.
+
+---
+
+## How the GROQ API key is protected
+
+- `appsettings.json` has an **empty** `ApiKey` field — the key is never stored there
+- The backend reads `GROQ_API_KEY` from environment variables at runtime
+- `appsettings.Development.json` is listed in `.gitignore` so local overrides are never pushed
+- `.env` files are also listed in `.gitignore`
+
+---
+
+## API Reference
+
+### `POST /api/analyze`
+
+Analyzes resume text and returns an ATS score.
+
+**Request body:**
+```json
+{
+  "text": "Your resume text here..."
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "role": "Full-Stack Software Engineer",
+    "level": "Junior",
+    "score": 79,
+    "techStack": ["React", "C#", ".NET", "SQL Server"],
+    "strengths": ["Quantified achievements with real metrics"],
+    "weaknesses": ["Missing CI/CD keywords"],
+    "missingKeywords": ["Docker", "Kubernetes", "CI/CD"],
+    "suggestions": ["Add measurable outcomes to each bullet point"],
+    "advice": "Focus on demonstrating impact through numbers."
+  }
+}
+```

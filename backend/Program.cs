@@ -22,8 +22,9 @@ builder.Services.PostConfigure<GroqSettings>(options =>
 builder.Services.AddHttpClient<IResumeAnalyzerService, ResumeAnalyzerService>();
 builder.Services.AddSingleton<IAnalysisRepository, InMemoryAnalysisRepository>();
 
-// Enable OpenAPI (Swagger) support
-builder.Services.AddOpenApi();
+// Configure Swashbuckle Swagger support
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 // Enable CORS
 builder.Services.AddCors(options =>
@@ -41,7 +42,8 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
 app.UseCors();
