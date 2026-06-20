@@ -26,14 +26,15 @@ builder.Services.AddSingleton<IAnalysisRepository, InMemoryAnalysisRepository>()
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Enable CORS
+// Enable CORS — allow frontend origins
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
-        policy.AllowAnyOrigin()
-              .AllowAnyMethod()
-              .AllowAnyHeader();
+        policy
+            .SetIsOriginAllowed(_ => true)   // allows Vercel preview URLs too
+            .AllowAnyMethod()
+            .AllowAnyHeader();
     });
 });
 
@@ -51,5 +52,8 @@ app.UseCors();
 app.UseAuthorization();
 
 app.MapControllers();
+
+// Health check endpoint (Render uses this to confirm service is up)
+app.MapGet("/health", () => Results.Ok(new { status = "healthy" }));
 
 app.Run();
