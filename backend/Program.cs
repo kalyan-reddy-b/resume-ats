@@ -53,6 +53,14 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+// Root endpoint — confirms the API is up
+app.MapGet("/", () => Results.Ok(new
+{
+    name = "Resume ATS Analyzer API",
+    status = "running",
+    endpoints = new[] { "POST /api/analyze", "GET /health" }
+}));
+
 // Health check endpoint (Render uses this to confirm service is up)
 app.MapGet("/health", () => Results.Ok(new { status = "healthy" }));
 
