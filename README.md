@@ -1,6 +1,12 @@
 # Resume ATS Analyzer
 
-A full-stack ATS (Applicant Tracking System) resume analyzer built with:
+A full-stack ATS (Applicant Tracking System) resume analyzer.
+
+🔗 **Live Links:**
+- **Frontend App**: [https://kalyan-b-resume-analyzer.vercel.app/](https://kalyan-b-resume-analyzer.vercel.app/)
+- **Backend API**: [https://kalyan-b-resume-analyzer.onrender.com](https://kalyan-b-resume-analyzer.onrender.com)
+
+Built with:
 - **Backend**: ASP.NET Core (.NET 8) Web API
 - **Frontend**: React + Vite + TypeScript + Tailwind CSS
 - **AI**: Groq API (free tier available)
